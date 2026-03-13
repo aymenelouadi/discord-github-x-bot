@@ -49,18 +49,27 @@ class TwitterPoster {
 
     try {
       const Scraper  = getScraper();
+      const { Cookie } = require('tough-cookie');
       this.scraper   = new Scraper();
 
-      // Build cookie array — both auth_token and ct0 are required by X
-      const cookies = [
-        `auth_token=${authToken};  domain=.x.com; path=/`,
-        `auth_token=${authToken};  domain=.twitter.com; path=/`,
-      ];
+      // All domains the scraper may hit — cookies must be valid for each
+      const DOMAINS = ['x.com', 'twitter.com', 'api.x.com', 'api.twitter.com'];
 
-      if (ct0) {
-        cookies.push(`ct0=${ct0}; domain=.x.com; path=/`);
-        cookies.push(`ct0=${ct0}; domain=.twitter.com; path=/`);
-      }
+      const makeCookie = (key, value) =>
+        DOMAINS.map(domain => new Cookie({
+          key,
+          value,
+          domain,
+          path:     '/',
+          secure:   true,
+          httpOnly: true,
+          sameSite: 'None',
+        }));
+
+      const cookies = [
+        ...makeCookie('auth_token', authToken),
+        ...(ct0 ? makeCookie('ct0', ct0) : []),
+      ];
 
       await this.scraper.setCookies(cookies);
 
