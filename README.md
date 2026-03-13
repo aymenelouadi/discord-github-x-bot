@@ -177,8 +177,8 @@ The Payload URL is built from `WEBHOOK_PUBLIC_URL` (`.env`) + the path in `confi
 
 ```
 # Example with a real domain:
-WEBHOOK_PUBLIC_URL=https://githubx.codnex.xyz
-# → Payload URL = https://githubx.codnex.xyz/github/webhook
+WEBHOOK_PUBLIC_URL=https://your-domain.com
+# → Payload URL = https://your-domain.com/github/webhook
 
 # Example with localhost (no WEBHOOK_PUBLIC_URL set):
 # → Payload URL = http://localhost:3000/github/webhook
