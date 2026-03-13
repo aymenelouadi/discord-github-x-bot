@@ -13,10 +13,11 @@ const crypto     = require('crypto');
 const config     = require('../../config.json');
 const logger     = require('../../utils/logger');
 
-const app    = express();
-const PORT   = process.env.WEBHOOK_PORT || config.webhook_server.port  || 3000;
-const PATH   = config.webhook_server.path || '/github/webhook';
-const SECRET = process.env.WEBHOOK_SECRET || '';
+const app        = express();
+const PORT       = process.env.WEBHOOK_PORT       || config.webhook_server.port       || 3000;
+const PATH       = config.webhook_server.path     || '/github/webhook';
+const SECRET     = process.env.WEBHOOK_SECRET     || '';
+const PUBLIC_URL = (process.env.WEBHOOK_PUBLIC_URL || config.webhook_server.public_url || '').replace(/\/$/, '');
 
 // Store event handlers registered by other systems
 const _handlers = new Map();  // eventName → Set<fn>
@@ -99,10 +100,11 @@ app.post(PATH, async (req, res) => {
 // Health-check endpoint
 app.get('/health', (_req, res) => {
   res.json({
-    ok:           true,
-    uptime:       process.uptime(),
-    repositories: config.repositories.filter(r => r.enabled !== false).map(r => r.repo),
-    timestamp:    new Date().toISOString(),
+    ok:              true,
+    uptime:          process.uptime(),
+    webhook_url:     PUBLIC_URL ? `${PUBLIC_URL}${PATH}` : `http://localhost:${PORT}${PATH}`,
+    repositories:    config.repositories.filter(r => r.enabled !== false).map(r => r.repo),
+    timestamp:       new Date().toISOString(),
   });
 });
 
@@ -120,9 +122,17 @@ function on(eventName, fn) {
 function start() {
   return new Promise((resolve) => {
     const server = app.listen(PORT, () => {
+      const publicEndpoint = PUBLIC_URL
+        ? `${PUBLIC_URL}${PATH}`
+        : `http://localhost:${PORT}${PATH}`;
+      const publicHealth = PUBLIC_URL
+        ? `${PUBLIC_URL}/health`
+        : `http://localhost:${PORT}/health`;
+
       logger.github(`Webhook server listening on port ${PORT}`);
-      logger.github(`Endpoint: POST http://localhost:${PORT}${PATH}`);
-      logger.github(`Health:   GET  http://localhost:${PORT}/health`);
+      logger.github(`Endpoint: POST ${publicEndpoint}`);
+      logger.github(`Health:   GET  ${publicHealth}`);
+      if (PUBLIC_URL) logger.github(`Public URL: ${PUBLIC_URL}`);
       if (!SECRET) logger.warn('WEBHOOK_SECRET not set — all requests accepted');
       resolve(server);
     });

@@ -167,16 +167,27 @@ In your GitHub repository → **Settings** → **Webhooks** → **Add webhook**:
 
 | Field | Value |
 |---|---|
-| Payload URL | `http://YOUR_SERVER_IP:3000/github/webhook` |
+| Payload URL | `https://your-domain.com/github/webhook` |
 | Content type | `application/json` |
 | Secret | Same value as `WEBHOOK_SECRET` in `.env` (optional) |
 | Which events? | ☑ **Releases** · ☑ **Pushes** |
 | Active | ✅ |
 
-> **Local development?** Use [ngrok](https://ngrok.com) to expose your local port:
+The Payload URL is built from `WEBHOOK_PUBLIC_URL` (`.env`) + the path in `config.json`:
+
+```
+# Example with a real domain:
+WEBHOOK_PUBLIC_URL=https://githubx.codnex.xyz
+# → Payload URL = https://githubx.codnex.xyz/github/webhook
+
+# Example with localhost (no WEBHOOK_PUBLIC_URL set):
+# → Payload URL = http://localhost:3000/github/webhook
+```
+
+> **No domain yet?** Use [ngrok](https://ngrok.com) for local testing:
 > ```bash
 > ngrok http 3000
-> # Use the https://xxxx.ngrok.io/github/webhook URL in GitHub
+> # Then set WEBHOOK_PUBLIC_URL=https://xxxx.ngrok.io
 > ```
 
 ---

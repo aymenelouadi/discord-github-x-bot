@@ -4,7 +4,8 @@
 
   "webhook_server": {
     "port": 3000,
-    "path": "/github/webhook"
+    "path": "/github/webhook",
+    "public_url": "https://githubx.codnex.xyz"
   },
 
   "discord": {
