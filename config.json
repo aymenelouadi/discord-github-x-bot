@@ -1,0 +1,95 @@
+{
+  "_comment": "Discord × GitHub × X.com Auto-Publisher — config.json",
+  "_license": "MIT",
+
+  "webhook_server": {
+    "port": 3000,
+    "path": "/github/webhook"
+  },
+
+  "discord": {
+    "prefix": "!",
+    "status_message": "Watching GitHub 🚀",
+    "status_type": "WATCHING"
+  },
+
+  "repositories": [
+    {
+      "id": "example-repo",
+      "enabled": true,
+      "repo": "owner/repo-name",
+      "events": ["release", "push"],
+      "branch_filter": "main",
+
+      "discord": {
+        "guild_id": "YOUR_GUILD_ID",
+        "channel_id": "YOUR_CHANNEL_ID",
+        "notify_on_push": false,
+        "notify_on_release": true,
+        "embed_color": "#58b9ff"
+      },
+
+      "twitter": {
+        "enabled": true,
+        "account": "default",
+        "post_on_push": false,
+        "post_on_release": true,
+        "hashtags": ["OpenSource", "GitHub", "DevUpdate"],
+        "template": "release"
+      },
+
+      "project": {
+        "name": "My Project",
+        "short_description": "An awesome open-source project",
+        "language": "JavaScript",
+        "website": "",
+        "logo_source": "discord_guild"
+      }
+    }
+  ],
+
+  "twitter": {
+    "accounts": {
+      "default": {
+        "note": "auth_token and ct0 are loaded from .env"
+      }
+    },
+    "tweet_templates": {
+      "release": {
+        "header": "🚀 New Release Drop",
+        "footer": "Built with Code Nexus  — Open Source under MIT License",
+        "max_changelog_lines": 5
+      },
+      "push": {
+        "header": "⚡ New Update Pushed",
+        "footer": "Stay tuned for more updates",
+        "max_changelog_lines": 3
+      }
+    }
+  },
+
+  "canvas": {
+    "width": 1200,
+    "height": 630,
+    "theme": {
+      "bg_gradient_start": "#0d1117",
+      "bg_gradient_end": "#161b22",
+      "accent": "#58b9ff",
+      "accent_secondary": "#7c3aed",
+      "text_primary": "#f0f6fc",
+      "text_secondary": "#8b949e",
+      "logo_glow": "#58b9ff"
+    },
+    "fonts": {
+      "title": "bold 52px Arial",
+      "subtitle": "28px Arial",
+      "body": "22px Arial",
+      "version": "bold 24px Arial",
+      "small": "18px Arial"
+    }
+  },
+
+  "database": {
+    "path": "./database/data.json"
+  }
+}

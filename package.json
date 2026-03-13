@@ -1,0 +1,47 @@
+{
+  "name": "discord-github-x-publisher",
+  "version": "1.0.0",
+  "description": "Discord bot that listens to GitHub webhooks and auto-publishes release announcements on X (Twitter) with a beautiful Canvas image.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "discord",
+    "github",
+    "twitter",
+    "x",
+    "webhook",
+    "automation",
+    "bot",
+    "canvas",
+    "open-source"
+  ],
+  "license": "MIT",
+  "author": "aymenelouadi",
+  "homepage": "https://github.com/aymenelouadi/discord-github-x-bot#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aymenelouadi/discord-github-x-bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aymenelouadi/discord-github-x-bot/issues"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "@octokit/rest": "^21.0.2",
+    "@octokit/webhooks": "^13.4.2",
+    "express": "^4.21.2",
+    "canvas": "^2.11.2",
+    "agent-twitter-client": "^0.0.18",
+    "axios": "^1.7.9",
+    "chalk": "^4.1.2",
+    "dotenv": "^16.4.7",
+    "body-parser": "^1.20.3",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

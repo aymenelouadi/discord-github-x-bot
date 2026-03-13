@@ -1,0 +1,21 @@
+# Secrets
+.env
+
+# Dependencies
+node_modules/
+
+# Generated media
+media/*.png
+media/*.jpg
+media/*.jpeg
+
+# Database
+database/data.json
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
