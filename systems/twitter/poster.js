@@ -48,30 +48,42 @@ class TwitterPoster {
     }
 
     try {
-      const Scraper  = getScraper();
-      const { Cookie } = require('tough-cookie');
-      this.scraper   = new Scraper();
+      const Scraper = getScraper();
+      this.scraper  = new Scraper();
 
-      // All domains the scraper may hit — cookies must be valid for each
-      const DOMAINS = ['x.com', 'twitter.com', 'api.x.com', 'api.twitter.com'];
+      // ── Step 1: setCookies stores against https://twitter.com (library constant)
+      // Pass plain strings — no explicit domain — so tough-cookie assigns twitter.com
+      const rawCookies = [`auth_token=${authToken}`];
+      if (ct0) rawCookies.push(`ct0=${ct0}`);
+      await this.scraper.setCookies(rawCookies);
 
-      const makeCookie = (key, value) =>
-        DOMAINS.map(domain => new Cookie({
-          key,
-          value,
-          domain,
-          path:     '/',
-          secure:   true,
-          httpOnly: true,
-          sameSite: 'None',
-        }));
-
-      const cookies = [
-        ...makeCookie('auth_token', authToken),
-        ...(ct0 ? makeCookie('ct0', ct0) : []),
-      ];
-
-      await this.scraper.setCookies(cookies);
+      // ── Step 2: inject same cookies directly into the jar for x.com & api domains
+      // agent-twitter-client exposes the jar at scraper.auth.jar after setCookies
+      const jar = this.scraper.auth?.jar;
+      if (jar && typeof jar.setCookie === 'function') {
+        const EXTRA_URLS = [
+          'https://x.com',
+          'https://api.x.com',
+          'https://api.twitter.com',
+        ];
+        for (const url of EXTRA_URLS) {
+          try {
+            await jar.setCookie(
+              `auth_token=${authToken}; Path=/; Secure; HttpOnly; SameSite=None`,
+              url
+            );
+            if (ct0) {
+              await jar.setCookie(
+                `ct0=${ct0}; Path=/; Secure; SameSite=None`,
+                url
+              );
+            }
+          } catch (e) {
+            logger.warn(`Cookie injection skipped for ${url}: ${e.message}`);
+          }
+        }
+        logger.twitter('Cookies injected for all X/Twitter domains');
+      }
 
       // Verify login status
       const loggedIn = await this.scraper.isLoggedIn();
